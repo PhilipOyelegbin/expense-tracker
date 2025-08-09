@@ -1,0 +1,330 @@
+basePath: /api/v1
+definitions:
+  controller.Expense:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      title:
+        type: string
+      userId:
+        type: integer
+    type: object
+  controller.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  controller.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+host: localhost:3030
+info:
+  contact:
+    email: info@philipoyelegbin.com.ng
+    name: Philip Oyelegbin
+    url: http://philipoyelegbin.com.ng
+  description: This is an API for an expense tracking application.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Expense Tracker API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login with user credentials
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Login as a user
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/controller.User'
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Register a user
+      tags:
+      - Auth
+  /expenses:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all expenses
+      tags:
+      - Expense
+    post:
+      consumes:
+      - application/json
+      description: Create a new expense
+      parameters:
+      - description: Expense data
+        in: body
+        name: Expense
+        required: true
+        schema:
+          $ref: '#/definitions/controller.Expense'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/controller.Expense'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a expense
+      tags:
+      - Expense
+  /expenses/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint deletes an expense by its ID.
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successful operation
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Expense not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete an expense
+      tags:
+      - Expense
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all expenses
+      tags:
+      - Expense
+    patch:
+      consumes:
+      - application/json
+      description: Update an expense
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Expense data
+        in: body
+        name: Expense
+        required: true
+        schema:
+          $ref: '#/definitions/controller.Expense'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/controller.Expense'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Expense not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update an expense
+      tags:
+      - Expense
+  /users/me:
+    delete:
+      consumes:
+      - application/json
+      description: Delete my profile as a signed in user
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successful operation
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete my profile
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Get my profile as a signed in user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/controller.User'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get my profile
+      tags:
+      - User
+security:
+- BearerAuth: []
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" and then your JWT token to authorize
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
