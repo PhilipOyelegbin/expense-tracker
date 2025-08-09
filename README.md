@@ -2,48 +2,39 @@
 
 ## 📝 Project Description
 
-**Expense Tracker API** is a simple expense tracker application to manage your finances. The application allows users to add, delete, and view their expenses. The application also provide a summary of the expenses.
+This is an API for an expense tracker application. This API allows users to create, read, update, and delete expenses. Users are able to sign up and log in to the application. Each user have their own set of expenses.
 
-This project serves as an excellent starting point for Go beginners to solidify fundamental concepts such as:
+## ✨ Features
 
-- Go Modules and Packages: Understanding project structure and dependencies.
+Here are the features that are implemented in the Expense Tracker API:
 
-- Structs and Slices: Defining and managing custom data collections.
+- Sign up as a new user.
+- Generate and validate JWTs for handling authentication and user session.
+- List and filter past expenses using the following filters:
+  - Past week
+  - Past month
+  - Last 3 months
+  - Custom (to specify a start and end date of your choosing).
+- Add a new expense
+- Remove existing expenses
+- Update existing expenses
 
-- Functions and Error Handling: Writing modular, robust, and idiomatic Go code.
+**Constraints**
 
-- File I/O: Reading from and writing to the local file system.
+You can use any programming language and framework of your choice. You can use a database of your choice to store the data. You can use any ORM or database library to interact with the database.
 
-- JSON Serialization/Deserialization: Persisting structured data to disk.
+Here are some constraints that you should follow:
 
-## ✨ Requirements
+You’ll be using JWT (JSON Web Token) to protect the endpoints and to identify the requester.
+For the different expense categories, you can use the following list (feel free to decide how to implement this as part of your data model):
 
-Application should run from the command line and should have the following features:
-
-- Users can add an expense with a description and amount.
-- Users can update an expense.
-- Users can delete an expense.
-- Users can view all expenses.
-- Users can view a summary of all expenses.
-- Users can view a summary of expenses for a specific month (of current year).
-
-Here are some additional features that you can add to the application:
-
-- Add expense categories and allow users to filter expenses by category.
-- Allow users to set a budget for each month and show a warning when the user exceeds the budget.
-- Allow users to export expenses to a CSV file.
-
-- Register User: Interactively add new user with a firstName, lastName, email, and password tags.
-
-- User Login: Interactively login with a email, and password tags.
-
-- Create Notes: Interactively add new notes with a title, and description tags.
-
-- View Notes: Retrieve and display the full details of a specific user notes by user ID.
-
-- Delete Note: Remove a note from your vault using its ID.
-
-- Local Persistence: All notes and users are saved to a local JSON file, ensuring your data is available across sessions.
+- Groceries
+- Leisure
+- Electronics
+- Utilities
+- Clothing
+- Health
+- Others
 
 ## 🛠️ Core Technologies Used
 
@@ -61,7 +52,7 @@ Here are some additional features that you can add to the application:
 
 ## 🚀 Installation
 
-To get Go Note Application up and running on your local machine, follow these steps:
+To get expense tracker up and running on your local machine, follow these steps:
 
 1. Ensure Go is Installed:
    Make sure you have Go installed (version 1.18 or higher is recommended). You can download it from go.dev/dl/.
@@ -75,24 +66,24 @@ go version
    If you're starting from scratch as part of a learning exercise, you'd create the project structure manually as described in the task instructions. If this were a real repository:
 
 ```
-git clone https://github.com/philipoyelegbin/golang-training.git/noteapp
-cd noteApp
+git clone https://github.com/philipoyelegbin/expense-tracker
+cd expense-tracker
 ```
 
 3. Initialize Go Module (if not already done):
 
 ```
-go mod init github.com/philipoyelegbin/golang-training.git/noteapp # Only if you created the project manually
+go mod init github.com/philipoyelegbin/expense-tracker.git      # Only if you created the project manually
 ```
 
 4. Build the Executable:
    This command compiles your Go source code into a single executable binary.
 
 ```
-go build -o noteapp
+go build -o expense-tracker
 ```
 
-This will create an executable file named noteapp in your project's root directory.
+This will create an executable file named expense-tracker in your project's root directory.
 
 ## 💡 Usage
 
@@ -101,93 +92,27 @@ Once built, you can run the CLI commands from your terminal.
 **General Usage**
 
 ```
-./noteapp     # Prompt you interactively to select an action to perform
+./expense-tracker     # Prompt you interactively to select an action to perform
 ```
-
-**Commands**
-
-This command will prompt you interactively
-
-1. `1` - Register a new user
-
-2. `2` - Create a new note
-
-3. `3` - View your notes
-
-4. `4` - Delete a notes
-
-5. `5` - Exit the app
 
 ## 📂 Project Structure
 
 ```
-noteapp/
-├── main.go # Main entry point and CLI command handling
-└── functions/ # Directory for defined logic
-    ├── user.go # Defines the User input validation and file persistence logic
-    ├── note.go # Defines the Note input validation and file persistence logic
-└── schema/ # Directory for defined model
-    ├── model.go # Defines the User and Note data model
-└── db/ # Directory for data storage
-    └── users.json # JSON file where all users are saved
-    └── notes.json # JSON file where all notes are saved
+expense-tracker/
+    ├── main.go # Main entry point and CLI command handling
+    └── controller/ # Directory for defined logic
+        ├── user.go # Defines the User input validation and file persistence logic
+        ├── note.go # Defines the Note input validation and file persistence logic
+    └── model/ # Directory for defined model
+        ├── model.go # Defines the User and Note data model
+    └── routes/ # Directory for data storage
+        └── users.json # JSON file where all users are saved
+        └── notes.json # JSON file where all notes are saved
 ```
-
-File Breakdown:
-
-- `main.go`:
-
-  - Contains the main function, which is the entry point of the application.
-
-  - Includes some helper functions to load users from file, load notes from file, and action selector.
-
-  - Includes some global variables
-
-  - Orchestrates calls to the external functions.
-
-- `functions/users.go`:
-
-  - Contains functions to perform certain tasks like;
-
-    - generate a user id for new user
-
-    - validate user input for creating new user and login
-
-    - save a new user to file
-
-    - creating a new user
-
-    - log in as a user
-
-- `functions/notes.go`:
-
-  - Contains functions to perform certain tasks like;
-
-    - generate a note id for newly created note
-
-    - validate note creation input
-
-    - save a new note to file
-
-    - creating a new note
-
-    - viewing all notes for a logged in user
-
-    - delete a note by id for a logged in user
-
-- `schema/model.go`:
-
-  - Contains the user and note type/model
 
 ## 💾 Data Persistence
 
-All your code users and notes are stored locally in a users.json and notes.json file respoectively which are located in the db/ directory within your project.
-
-- When the CLI starts, users.json and notes.json is loaded into memory.
-
-- Any add or delete operations modify the in-memory data.
-
-- After a modification, the function to save is called to write the updated data back to respective file, ensuring your changes are persistent.
+All data are stored on a mysql database.
 
 ## 🤝 Contributing
 
