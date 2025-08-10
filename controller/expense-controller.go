@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"expense-tracker/model"
 	"expense-tracker/utils"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -160,8 +161,8 @@ func FilterExpenseByWeek(w http.ResponseWriter, r *http.Request) {
 	for _, expense := range model.GetExpense() {
 		expenseDate, err := time.Parse("02/01/2006", expense.Date)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+			log.Printf("Failed to parse date for expense ID %d: %v", expense.ID, err)
+			continue
 		}
 
 		if expense.UserId == userId && expenseDate.After(sevenDaysAgo) {
@@ -214,8 +215,8 @@ func FilterExpenseByMonth(w http.ResponseWriter, r *http.Request) {
 	for _, expense := range model.GetExpense() {
 		expenseDate, err := time.Parse("02/01/2006", expense.Date)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+			log.Printf("Failed to parse date for expense ID %d: %v", expense.ID, err)
+			continue
 		}
 
 		if expense.UserId == userId && expenseDate.After(oneMonthAgo) {
@@ -268,8 +269,8 @@ func FilterExpenseByPastThreeMonth(w http.ResponseWriter, r *http.Request) {
 	for _, expense := range model.GetExpense() {
 		expenseDate, err := time.Parse("02/01/2006", expense.Date)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+			log.Printf("Failed to parse date for expense ID %d: %v", expense.ID, err)
+			continue
 		}
 
 		if expense.UserId == userId && expenseDate.After(threeMonthAgo) {
@@ -291,6 +292,91 @@ func FilterExpenseByPastThreeMonth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     w.Write(res)
+}
+
+// @Tags Expense
+// @Summary Filter expenses by custom date
+// @Description Retrieve a list of all expenses by custom date
+// @Accept  json
+// @Produce json
+// @Param start_date query string true "Start date in YYYY-MM-DD format"
+// @Param end_date query string true "End date in YYYY-MM-DD format"
+// @Success 200 {array} Expense "Successful operation"
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /expenses/dates [get]
+func FilterExpenseByCustomDate(w http.ResponseWriter, r *http.Request) {
+	userId, err := utils.GetUserIdFromJWTToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	user, _ := model.GetUserById(userId)
+	if user.ID == 0 {
+		http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+		return
+	}
+
+	// get the start and end date from query parameters.
+	startDateStr := r.URL.Query().Get("start_date")
+	endDateStr := r.URL.Query().Get("end_date")
+
+	if startDateStr == "" || endDateStr == "" {
+		http.Error(w, `{"message": "Both start_date and end_date query parameters are required."}`, http.StatusBadRequest)
+		return
+	}
+
+	// parse the date strings into time.Time objects.
+	const dateFormat = "02/01/2006"
+	startDate, err := time.Parse(dateFormat, startDateStr)
+	if err != nil {
+		http.Error(w, `{"message": "Invalid start_date format. Please use YYYY-MM-DD."}`, http.StatusBadRequest)
+		return
+	}
+	endDate, err := time.Parse(dateFormat, endDateStr)
+	if err != nil {
+		http.Error(w, `{"message": "Invalid end_date format. Please use YYYY-MM-DD."}`, http.StatusBadRequest)
+		return
+	}
+
+	var filteredExpenses []model.ExpenseData
+	allExpenses := model.GetExpense()
+
+	for _, expense := range allExpenses {
+		// skip invalid expenses or those that don't belong to the user.
+		if expense.UserId != userId {
+			continue
+		}
+
+		expenseDate, err := time.Parse(dateFormat, expense.Date)
+		if err != nil {
+			log.Printf("Failed to parse date for expense ID %d: %v", expense.ID, err)
+			continue
+		}
+
+		// check if the expense date is within the custom date range (inclusive).
+		isAfterOrEqualStart := !expenseDate.Before(startDate)
+		isBeforeOrEqualEnd := !expenseDate.After(endDate)
+		if isAfterOrEqualStart && isBeforeOrEqualEnd {
+			filteredExpenses = append(filteredExpenses, expense)
+		}
+	}
+
+	if len(filteredExpenses) == 0 {
+		http.Error(w, `{"message": "No expenses found for the specified date range."}`, http.StatusNotFound)
+		return
+	}
+
+	res, err := json.Marshal(filteredExpenses)
+	if err != nil {
+		http.Error(w, `{"message": "Failed to marshal expenses."}`, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
 }
 
 // @Tags Expense

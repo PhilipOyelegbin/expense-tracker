@@ -40,15 +40,9 @@ For the different expense categories, you can use the following list (feel free 
 
 - Go (Golang): The primary programming language.
 
-- Standard Library Packages:
+- Standard Library Packages: Some standard internal library log, net/http, strconv, time, encoding/json, etc.
 
-  - fmt: For formatted input and output.
-
-  - os: For operating system interactions, including file system operations.
-
-  - strings: For string manipulation (e.g., trimming, splitting, case conversion).
-
-  - encoding/json: For marshaling (saving) and unmarshaling (loading) Go structs to/from JSON.
+- External Library Packages: Some external library mux, swagger, swag cli, etc.
 
 ## 🚀 Installation
 
@@ -99,15 +93,23 @@ Once built, you can run the CLI commands from your terminal.
 
 ```
 expense-tracker/
-    ├── main.go # Main entry point and CLI command handling
-    └── controller/ # Directory for defined logic
-        ├── user.go # Defines the User input validation and file persistence logic
-        ├── note.go # Defines the Note input validation and file persistence logic
-    └── model/ # Directory for defined model
-        ├── model.go # Defines the User and Note data model
-    └── routes/ # Directory for data storage
-        └── users.json # JSON file where all users are saved
-        └── notes.json # JSON file where all notes are saved
+  ├── main.go # Main entry point and CLI command handling
+  ├── Makefile # App script runner file
+  └── config/ # Directory for app configuration
+    ├── dbConfig.go # Entails the database configuration
+  └── docs/ # Directory for swagger generated docs
+  └── utils/ # Directory for app utilities
+    ├── utils.go # Entails some helper functions.
+  └── controller/ # Directory for defined logic
+    ├── user-controller.go # Defines the user logic for all user routes
+    ├── auth-controller.go # Defines the registration and login logic
+    ├── expense-controller.go # Defines the expense logic for all expense routes
+  └── model/ # Directory for defined types
+    ├── types.go # Defines the data model and instantiate database
+  └── routes/ # Directory for routes
+    └── user-routes.go # Contain the routes for all user actions
+    └── auth-routes.go # Contain the routes for register and login action
+    └── expense-routes.go # Contains the routes for all expense actions
 ```
 
 ## 💾 Data Persistence

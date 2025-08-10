@@ -273,6 +273,50 @@ paths:
       summary: Update an expense
       tags:
       - Expense
+  /expenses/dates:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses by custom date
+      parameters:
+      - description: Start date in YYYY-MM-DD format
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date in YYYY-MM-DD format
+        in: query
+        name: end_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Filter expenses by custom date
+      tags:
+      - Expense
   /expenses/month:
     get:
       consumes:
