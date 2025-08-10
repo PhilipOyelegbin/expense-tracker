@@ -6,6 +6,7 @@ import (
 	"expense-tracker/utils"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -38,6 +39,7 @@ var Categories = [7]string{
 // @Produce json
 // @Success 200 {array} Expense "Successful operation"
 // @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /expenses [get]
 func GetExpense(w http.ResponseWriter, r *http.Request) {
@@ -86,6 +88,7 @@ func GetExpense(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} Expense "Successful operation"
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /expenses/{id} [get]
 func GetExpenseById(w http.ResponseWriter, r *http.Request) {
@@ -124,6 +127,168 @@ func GetExpenseById(w http.ResponseWriter, r *http.Request) {
 
     res, _ := json.Marshal(expense)
     w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    w.Write(res)
+}
+
+// @Tags Expense
+// @Summary Filter expenses by past week
+// @Description Retrieve a list of all expenses for the past week
+// @Accept  json
+// @Produce json
+// @Success 200 {array} Expense "Successful operation"
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /expenses/week [get]
+func FilterExpenseByWeek(w http.ResponseWriter, r *http.Request) {
+	userId, err := utils.GetUserIdFromJWTToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+        return
+    }
+
+	// get the past week expenses based on the current day
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7)
+	var pastWeekExpenses []model.ExpenseData
+	for _, expense := range model.GetExpense() {
+		expenseDate, err := time.Parse("02/01/2006", expense.Date)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if expense.UserId == userId && expenseDate.After(sevenDaysAgo) {
+			pastWeekExpenses = append(pastWeekExpenses, expense)
+		}
+	}
+
+	if len(pastWeekExpenses) == 0 {
+		http.Error(w, `{"message": "No expenses found for the past week"}`, http.StatusNotFound)
+		return
+	}
+
+	res, err := json.Marshal(pastWeekExpenses)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    w.Write(res)
+}
+
+// @Tags Expense
+// @Summary Filter expenses by past month
+// @Description Retrieve a list of all expenses for the past month
+// @Accept  json
+// @Produce json
+// @Success 200 {array} Expense "Successful operation"
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /expenses/month [get]
+func FilterExpenseByMonth(w http.ResponseWriter, r *http.Request) {
+	userId, err := utils.GetUserIdFromJWTToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+        return
+    }
+
+	// get the past month expenses based on the current day
+	oneMonthAgo := time.Now().AddDate(0, -1, 0)
+	var pastMonthExpenses []model.ExpenseData
+	for _, expense := range model.GetExpense() {
+		expenseDate, err := time.Parse("02/01/2006", expense.Date)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if expense.UserId == userId && expenseDate.After(oneMonthAgo) {
+			pastMonthExpenses = append(pastMonthExpenses, expense)
+		}
+	}
+
+	if len(pastMonthExpenses) == 0 {
+		http.Error(w, `{"message": "No expenses found for the past month"}`, http.StatusNotFound)
+		return
+	}
+
+	res, err := json.Marshal(pastMonthExpenses)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    w.Write(res)
+}
+
+// @Tags Expense
+// @Summary Filter expenses by past three month
+// @Description Retrieve a list of all expenses for the past three month
+// @Accept  json
+// @Produce json
+// @Success 200 {array} Expense "Successful operation"
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /expenses/past-three-month [get]
+func FilterExpenseByPastThreeMonth(w http.ResponseWriter, r *http.Request) {
+	userId, err := utils.GetUserIdFromJWTToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+        return
+    }
+
+	// get the past three month expenses based on the current day
+	threeMonthAgo := time.Now().AddDate(0, -3, 0)
+	var pastThreeMonthExpenses []model.ExpenseData
+	for _, expense := range model.GetExpense() {
+		expenseDate, err := time.Parse("02/01/2006", expense.Date)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if expense.UserId == userId && expenseDate.After(threeMonthAgo) {
+			pastThreeMonthExpenses = append(pastThreeMonthExpenses, expense)
+		}
+	}
+
+	if len(pastThreeMonthExpenses) == 0 {
+		http.Error(w, `{"message": "No expenses found for the past three month"}`, http.StatusNotFound)
+		return
+	}
+
+	res, err := json.Marshal(pastThreeMonthExpenses)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     w.Write(res)
 }

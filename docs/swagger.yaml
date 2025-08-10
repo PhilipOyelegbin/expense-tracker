@@ -120,6 +120,10 @@ paths:
           description: Unauthorized
           schema:
             type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
         "500":
           description: Internal server error
           schema:
@@ -220,6 +224,10 @@ paths:
           description: Unauthorized
           schema:
             type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
         "500":
           description: Internal server error
           schema:
@@ -263,6 +271,105 @@ paths:
           schema:
             type: string
       summary: Update an expense
+      tags:
+      - Expense
+  /expenses/month:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses for the past month
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Filter expenses by past month
+      tags:
+      - Expense
+  /expenses/past-three-month:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses for the past three month
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Filter expenses by past three month
+      tags:
+      - Expense
+  /expenses/week:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses for the past week
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Filter expenses by past week
       tags:
       - Expense
   /users/me:
