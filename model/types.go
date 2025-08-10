@@ -12,19 +12,19 @@ var db *gorm.DB
 type UserData struct {
 	gorm.Model
 	FirstName string `json:"firstName"`
-	LastName string `json:"lastName"`
-	Email string `json:"email"`
-	Password string `json:"password"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 }
 
 type ExpenseData struct {
 	gorm.Model
-	Title       string  `gorm:"json:title"`
+	Title       string  `json:"title"`
 	Description string  `json:"description"`
 	Amount      float64 `json:"amount"`
-	Date       string  `json:"date"`
-	Category   string  `json:"category"`
-	UserId    int64   `json:"userId"`
+	Date        string  `json:"date"`
+	Category	string	`json:"category"`
+	UserId      int64   `json:"userId"`
 }
 
 func init() {
@@ -35,7 +35,6 @@ func init() {
 	db.DB().SetMaxOpenConns(100)
 	db.AutoMigrate(&UserData{}, &ExpenseData{})
 	log.Println("Connected to database successfully")
-
 }
 
 func (u *UserData) CreateUser() *UserData {
@@ -45,12 +44,12 @@ func (u *UserData) CreateUser() *UserData {
 }
 
 func GetUsers() []UserData {
-    var users []UserData
-    result := db.Find(&users)
-    if result.Error != nil {
-        return []UserData{}
-    }
-    return users
+	var users []UserData
+	result := db.Find(&users)
+	if result.Error != nil {
+		return []UserData{}
+	}
+	return users
 }
 
 func GetUserById(id int64) (*UserData, *gorm.DB) {
@@ -74,7 +73,7 @@ func (e *ExpenseData) CreateExpense() *ExpenseData {
 
 func GetExpense() []ExpenseData {
 	var expense []ExpenseData
-	result :=db.Find(&expense)
+	result := db.Find(&expense)
 	if result.Error != nil {
 		return []ExpenseData{}
 	}

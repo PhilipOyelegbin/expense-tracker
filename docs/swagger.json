@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is an API for an expense tracking application.",
+        "description": "This is an API for an expense tracker application. This API allows users to create, read, update, and delete expenses. Users are able to sign up and log in to the application. Each user have their own set of expenses.",
         "title": "Expense Tracker API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
@@ -448,9 +448,6 @@
                 },
                 "title": {
                     "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 }
             }
         },

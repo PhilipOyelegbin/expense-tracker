@@ -12,8 +12,6 @@ definitions:
         type: string
       title:
         type: string
-      userId:
-        type: integer
     type: object
   controller.Login:
     properties:
@@ -38,7 +36,9 @@ info:
     email: info@philipoyelegbin.com.ng
     name: Philip Oyelegbin
     url: http://philipoyelegbin.com.ng
-  description: This is an API for an expense tracking application.
+  description: This is an API for an expense tracker application. This API allows
+    users to create, read, update, and delete expenses. Users are able to sign up
+    and log in to the application. Each user have their own set of expenses.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html

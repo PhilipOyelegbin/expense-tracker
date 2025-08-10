@@ -28,11 +28,25 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// parse the body contents and hash the password
 	newUser := &model.UserData{}
 	utils.ParseBody(r, newUser)
+	if newUser.FirstName == "" || newUser.LastName == "" || newUser.Email == "" || newUser.Password == "" {
+		http.Error(w, `{"message": "All fields are required"}`, http.StatusBadRequest)
+		return
+	}
+	
 	hash, err := argon2id.CreateHash(newUser.Password, argon2id.DefaultParams)
 	if err != nil {
 		log.Fatal(err)
 	}
 	newUser.Password = hash
+
+	// confirm the email provided is not previously registered
+	existingUser := model.GetUsers()
+	for _, u := range existingUser {
+		if u.Email == newUser.Email {
+			http.Error(w, `{"message": "Email already registered"}`, http.StatusConflict)
+			return
+		}
+	}
 
 	// create the new user and marshall the contents as a response
 	user := newUser.CreateUser()

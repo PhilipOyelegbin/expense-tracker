@@ -19,6 +19,17 @@ type Expense struct {
 	Category   string  `json:"category"`
 }
 
+// Categories struct to represent an expense category in the API
+var Categories = [7]string{
+	"Groceries",
+	"Leisure",
+	"Electronics",
+	"Utilities",
+	"Clothing",
+	"Health",
+	"Others",
+}
+
 
 // @Tags Expense
 // @Summary Get all expenses
@@ -35,6 +46,11 @@ func GetExpense(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+        return
+    }
 
 	allExpenses := model.GetExpense()
     var userExpenses []model.ExpenseData
@@ -78,6 +94,11 @@ func GetExpenseById(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+        return
+    }
 
 	// get the id parameter from the request and convert to integer
 	vars := mux.Vars(r)
@@ -123,10 +144,25 @@ func CreateExpense(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+        return
+    }
 
 	// parse the request body to create a new expense
 	newExpense := &model.ExpenseData{}
 	utils.ParseBody(r, newExpense)
+
+	if newExpense.Title == "" || newExpense.Description == "" || newExpense.Amount <= 0 || newExpense.Date == "" {
+		http.Error(w, `{"message":"All fields are required."}`, http.StatusBadRequest)
+		return
+	}
+
+	if newExpense.Category != Categories[0] && newExpense.Category != Categories[1] && newExpense.Category != Categories[2] && newExpense.Category != Categories[3] && newExpense.Category != Categories[4] && newExpense.Category != Categories[5] && newExpense.Category != Categories[6] {
+		http.Error(w, `{"message":"Invalid category provided"}`, http.StatusBadRequest)
+		return
+	}
 
 	// append the userId to the new expense data
 	newExpense.UserId = userId
@@ -159,6 +195,11 @@ func UpdateExpense(w http.ResponseWriter, r *http.Request) {
     userId, err := utils.GetUserIdFromJWTToken(r)
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
+        return
+    }
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
         return
     }
 
@@ -232,6 +273,11 @@ func DeleteExpenseById(w http.ResponseWriter, r *http.Request) {
     userId, err := utils.GetUserIdFromJWTToken(r)
     if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
+        return
+    }
+	user, _ := model.GetUserById(userId)
+    if user.ID == 0 {
+        http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
         return
     }
 

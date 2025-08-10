@@ -14,7 +14,7 @@ import (
 
 // @title Expense Tracker API
 // @version 1.0
-// @description This is an API for an expense tracking application.
+// @description This is an API for an expense tracker application. This API allows users to create, read, update, and delete expenses. Users are able to sign up and log in to the application. Each user have their own set of expenses.
 // @termsOfService http://swagger.io/terms/
 // @contact.name Philip Oyelegbin
 // @contact.url http://philipoyelegbin.com.ng
@@ -31,7 +31,6 @@ import (
 func main() {
 	env := utils.LoadEnv()
 	router := mux.NewRouter()
-	// router.Use(mux.CORSMethodMiddleware(router))
 	subRouter := router.PathPrefix("/api/v1").Subrouter()
 	routes.RegisterAuthRoutes(subRouter)
 	routes.RegisterUserRoutes(subRouter)
@@ -39,7 +38,6 @@ func main() {
 
 	// setup swagger documentation
 	subRouter.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		// httpSwagger.URL("http://localhost:"+env.PORT+"/api/v1/swagger/doc.json"), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),

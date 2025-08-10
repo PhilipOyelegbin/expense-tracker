@@ -455,9 +455,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 }
             }
         },
@@ -512,7 +509,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Expense Tracker API",
-	Description:      "This is an API for an expense tracking application.",
+	Description:      "This is an API for an expense tracker application. This API allows users to create, read, update, and delete expenses. Users are able to sign up and log in to the application. Each user have their own set of expenses.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
