@@ -10,8 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var NewExpense model.ExpenseData
-
 // Expense struct to represent an expense in the API
 type Expense struct {
 	Title      string  `json:"title"`
@@ -19,7 +17,6 @@ type Expense struct {
 	Amount     float64 `json:"amount"`
 	Date       string  `json:"date"`
 	Category   string  `json:"category"`
-	UserID     int64   `json:"userId"`
 }
 
 
@@ -49,7 +46,7 @@ func GetExpense(w http.ResponseWriter, r *http.Request) {
     }
 
     if len(userExpenses) == 0 {
-        http.Error(w, "No expenses found", http.StatusNotFound)
+        http.Error(w, `{"message": "No expenses found"}`, http.StatusNotFound)
         return
     }
 
@@ -172,7 +169,7 @@ func UpdateExpense(w http.ResponseWriter, r *http.Request) {
 	expenseId := vars["id"]
 	ID, err := strconv.ParseInt(expenseId, 0, 0)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -243,7 +240,7 @@ func DeleteExpenseById(w http.ResponseWriter, r *http.Request) {
 	expenseId := vars["id"]
 	ID, err := strconv.ParseInt(expenseId, 0, 0)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

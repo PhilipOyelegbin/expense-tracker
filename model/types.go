@@ -44,22 +44,25 @@ func (u *UserData) CreateUser() *UserData {
 	return u
 }
 
-
 func GetUsers() []UserData {
-	var users []UserData
-	db.Find(&users)
-	return users
+    var users []UserData
+    result := db.Find(&users)
+    if result.Error != nil {
+        return []UserData{}
+    }
+    return users
 }
 
 func GetUserById(id int64) (*UserData, *gorm.DB) {
 	var user UserData
-	db = db.Where("ID=?", id).Find(&user)
-	return &user, db
+	result := db.Where("ID=?", id).First(&user)
+	return &user, result
 }
 
 func DeleteUserById(id int64) UserData {
 	var user UserData
-	db.Where("ID=?", id).Delete(user)
+	db.Where("ID=?", id).First(&user)
+	db.Where("ID=?", id).Delete(&user)
 	return user
 }
 
@@ -71,18 +74,22 @@ func (e *ExpenseData) CreateExpense() *ExpenseData {
 
 func GetExpense() []ExpenseData {
 	var expense []ExpenseData
-	db.Find(&expense)
+	result :=db.Find(&expense)
+	if result.Error != nil {
+		return []ExpenseData{}
+	}
 	return expense
 }
 
 func GetExpenseById(id int64) (ExpenseData, *gorm.DB) {
 	var expense ExpenseData
-	db = db.Where("ID=?", id).Find(&expense)
-	return expense, db
+	result := db.Where("ID=?", id).First(&expense)
+	return expense, result
 }
 
 func DeleteExpenseById(id int64) ExpenseData {
 	var expense ExpenseData
-	db.Where("ID=?", id).Delete(expense)
+	db.Where("ID=?", id).First(&expense)
+	db.Where("ID=?", id).Delete(&expense)
 	return expense
 }

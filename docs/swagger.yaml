@@ -26,14 +26,13 @@ definitions:
     properties:
       email:
         type: string
-      first_name:
+      firstName:
         type: string
-      last_name:
+      lastName:
         type: string
       password:
         type: string
     type: object
-host: localhost:3030
 info:
   contact:
     email: info@philipoyelegbin.com.ng

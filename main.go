@@ -21,7 +21,6 @@ import (
 // @contact.email info@philipoyelegbin.com.ng
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:3030
 // @BasePath /api/v1
 // @Security BearerAuth
 // @securityDefinitions.apikey BearerAuth
@@ -32,7 +31,7 @@ import (
 func main() {
 	env := utils.LoadEnv()
 	router := mux.NewRouter()
-	router.Use(mux.CORSMethodMiddleware(router))
+	// router.Use(mux.CORSMethodMiddleware(router))
 	subRouter := router.PathPrefix("/api/v1").Subrouter()
 	routes.RegisterAuthRoutes(subRouter)
 	routes.RegisterUserRoutes(subRouter)

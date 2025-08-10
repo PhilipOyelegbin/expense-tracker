@@ -15,7 +15,6 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3030",
     "basePath": "/api/v1",
     "paths": {
         "/auth/login": {
@@ -472,10 +471,10 @@
                 "email": {
                     "type": "string"
                 },
-                "first_name": {
+                "firstName": {
                     "type": "string"
                 },
-                "last_name": {
+                "lastName": {
                     "type": "string"
                 },
                 "password": {
