@@ -14,7 +14,8 @@ Here are the features that are implemented in the Expense Tracker API:
   - Past week
   - Past month
   - Last 3 months
-  - Custom (to specify a start and end date of your choosing).
+  - Custom (to specify a start and end date of your choosing)
+  - Category
 - Add a new expense
 - Remove existing expenses
 - Update existing expenses

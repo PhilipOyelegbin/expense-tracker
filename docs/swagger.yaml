@@ -273,6 +273,45 @@ paths:
       summary: Update an expense
       tags:
       - Expense
+  /expenses/category:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all expenses by category
+      parameters:
+      - description: Category of the expense
+        in: query
+        name: category
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            items:
+              $ref: '#/definitions/controller.Expense'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Filter expenses by category
+      tags:
+      - Expense
   /expenses/dates:
     get:
       consumes:

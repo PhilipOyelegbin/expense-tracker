@@ -380,6 +380,63 @@ func FilterExpenseByCustomDate(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Tags Expense
+// @Summary Filter expenses by category
+// @Description Retrieve a list of all expenses by category
+// @Accept  json
+// @Produce json
+// @Param category query string true "Category of the expense"
+// @Success 200 {array} Expense "Successful operation"
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /expenses/category [get]
+func FilterExpenseByCategory(w http.ResponseWriter, r *http.Request) {
+	userId, err := utils.GetUserIdFromJWTToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	user, _ := model.GetUserById(userId)
+	if user.ID == 0 {
+		http.Error(w, `{"message": "Unauthorized"}`, http.StatusUnauthorized)
+		return
+	}
+
+	// get the category from query parameters.
+	categoryStr := r.URL.Query().Get("category")
+	if categoryStr == "" {
+		http.Error(w, `{"message": "Category query parameter is required."}`, http.StatusBadRequest)
+		return
+	}
+
+	var filteredExpenses []model.ExpenseData
+	allExpenses := model.GetExpense()
+	for _, expense := range allExpenses {
+		// skip invalid expenses or those that don't belong to the user.
+		if expense.UserId != userId || expense.Category != categoryStr {
+			continue
+		} else {
+			filteredExpenses = append(filteredExpenses, expense)
+		}
+	}
+
+	if len(filteredExpenses) == 0 {
+		http.Error(w, `{"message": "No expenses found for the specified category."}`, http.StatusNotFound)
+		return
+	}
+
+	res, err := json.Marshal(filteredExpenses)
+	if err != nil {
+		http.Error(w, `{"message": "Failed to marshal expenses."}`, http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
+// @Tags Expense
 // @Summary Create a expense
 // @Description Create a new expense
 // @Accept  json
